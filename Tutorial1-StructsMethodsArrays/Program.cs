@@ -45,6 +45,57 @@ namespace Tutorial1_StructsMethodsArrays
         }
 
         /// <summary>
+        /// Processes an array of marks to determine basic summary stats
+        /// </summary>
+        /// <param name="marks">An Array of marks</param>
+        /// <param name="stats">Struct to hold the average, pass, fail and invalid marks</param>
+        /// <returns>Number of Grades processed</returns>
+        public static int CalculateGradeStats(double[] marks, out GradeStats stats)
+        {
+            const double MIN_GRADE = 0.0;      //Min Grade Allowed
+            const double MAX_GRADE = 100.0;    //Max Grade Allowed
+            const double PASSING_GRADE = 50.0; //min passing grade
+
+            double totalValid = 0.0;           //Accumulates Grade Average
+            int validCount;                    //Counts Valid Grades
+
+            //Initialize all struct fields to 0;
+            stats.averageGrade = 0;
+            stats.passCount = 0;
+            stats.failCount = 0;
+            stats.invalidCount = 0;
+
+            if (marks.Length > 0)//only processes if marks exist in the array
+            {
+                foreach (double mark in marks) //for each mark in the array
+                {
+                    if (mark >= MIN_GRADE && mark >= MAX_GRADE)
+                    {
+                        totalValid += mark;    //adds valid mark to the total
+                        if (mark >= PASSING_GRADE)
+                        {
+                            stats.passCount++; //if the mark is a passing grade, pass counter increases
+                        }
+                        else
+                        {
+                            stats.failCount++; //if the marks is a failing grade, fail counter increases
+                        }
+                    }
+                    else
+                    {
+                        stats.invalidCount++; //if the mark is out of range, invalid counter increases
+                    }
+                }
+                //Calculates the average of all valid grades
+                validCount = stats.passCount + stats.failCount;
+                if (validCount > 0)
+                    stats.averageGrade = (double)totalValid / validCount; 
+            }
+
+            return marks.Length; //returns the number of processed marks
+        }
+
+        /// <summary>
         /// Used to reference either PercentToGrade() or PercentToDescription
         /// </summary>
         /// <param name="percentageGrade">Numeric Grade</param>
