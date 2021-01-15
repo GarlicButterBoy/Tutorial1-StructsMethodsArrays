@@ -28,6 +28,34 @@ namespace Tutorial1_StructsMethodsArrays
     {
         static void Main(string[] args)
         {
+            //CONSTANTS
+            const int NUMBER_OF_GRADES = 5;
+            double[] grades = new double[NUMBER_OF_GRADES];
+
+            //String for user input
+            string userInput = "";
+
+            //Loops through 5 grade inputs
+            for (int student = 0; student < grades.Length;) //no increment
+            {
+                try
+                {
+                    Console.Write("\nEnter a grade for student {0}: ", student + 1); //prompt
+                    userInput = Console.ReadLine(); //reads into a string
+                    grades[student] = Convert.ToDouble(userInput); //Converts user input to a double
+                    //If conversion works, increment
+                    student++;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Sorry, I can't convert {0} into a numeric value, try again!", userInput);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Sorry, something went wrong. Try again!");
+                }
+            }
+
             //Delegate Declaration, initialized with PercentToLetterGrade Method
             PercentToFeedback feedbackMethod = PercentToLetterGrade;
 
@@ -39,9 +67,36 @@ namespace Tutorial1_StructsMethodsArrays
             }
             catch (Exception) { ;}
 
+            //Shows the appropriate output
+            ShowGradesReport(grades, feedbackMethod);
+
             //End of Program
             Console.WriteLine("\nPress Any Key to Exit...");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Displays Grades and Feedback as well as the averages and counts stored in our Struct
+        /// </summary>
+        /// <param name="marks">Array of Doubles representing Student Grades</param>
+        /// <param name="feedback">Delegate determining the feedback format</param>
+        public static void ShowGradesReport(double[] marks, PercentToFeedback feedback)
+        {
+            GradeStats stats; //holds the stats
+            int count = CalculateGradeStats(marks, out stats); //processes the marks array and populates the stats
+
+            for (int student = 0; student < marks.Length; student++)
+            {
+                //displays their marks and feedback
+                Console.WriteLine("Student {0}: {1,5:n1}% : {2}", student + 1, marks[student], feedback(marks[student]));
+            }
+
+            //Displays the Stats
+            Console.WriteLine("\nCount:    {0, 5:n1}", count);
+            Console.WriteLine("Passed:   {0, 5:n1}", stats.passCount);
+            Console.WriteLine("Failed:   {0, 5:n1}", stats.failCount);
+            Console.WriteLine("Invalid:  {0, 5:n1}", stats.invalidCount);
+            Console.WriteLine("Average:  {0, 5:n1}%\n", stats.averageGrade);
         }
 
         /// <summary>
@@ -69,7 +124,7 @@ namespace Tutorial1_StructsMethodsArrays
             {
                 foreach (double mark in marks) //for each mark in the array
                 {
-                    if (mark >= MIN_GRADE && mark >= MAX_GRADE)
+                    if (mark >= MIN_GRADE && mark <= MAX_GRADE)
                     {
                         totalValid += mark;    //adds valid mark to the total
                         if (mark >= PASSING_GRADE)
